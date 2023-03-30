@@ -164,7 +164,7 @@ Vector3f Scene::Direct_Illumination(const Ray &ray, Intersection &inter, float &
         Vector3f NN = inter_light.normal;
         Vector3f emit = inter_light.emit;
         // denoise: remove vertical black lines in cornell-box
-        Vector3f newP = p + N*1e-3;
+        Vector3f newP = dotProduct(p,N) > 0 ? p + N*1e-3 : p - N*1e-3;
         Ray p2x(newP, ws);
         Intersection middle = intersect(p2x);
         float accuracy = 1e-3;
@@ -181,6 +181,8 @@ Vector3f Scene::Direct_Illumination(const Ray &ray, Intersection &inter, float &
 
 Vector3f Scene::castRay_NEE(const Ray &ray, int depth) const
 {
+    if(depth>maxDepth) return Vector3f(0.5f,0.5f,0.5f);
+
     Intersection inter = intersect(ray);
 
     if (!inter.happened)
@@ -205,9 +207,21 @@ Vector3f Scene::castRay_NEE(const Ray &ray, int depth) const
         return Vector3f();
     }
 
+        // reflect & refract
+    if (inter.m->ior != 1){
+        Vector3f reflectionDirection = normalize(reflect(ray.direction, N));
+        Vector3f refractionDirection = normalize(refract(ray.direction, N, inter.m->ior));
+        Vector3f reflectionRayOrig = (dotProduct(reflectionDirection, N) < 0) ? p - N * EPSILON : p + N * EPSILON;
+        Vector3f refractionRayOrig = (dotProduct(refractionDirection, N) < 0) ? p - N * EPSILON : p + N * EPSILON;
+        Vector3f reflectionColor = castRay_NEE(Ray(reflectionRayOrig, reflectionDirection), depth + 1);
+        Vector3f refractionColor = castRay_NEE(Ray(refractionRayOrig, refractionDirection), depth + 1);
+        float kr;
+        fresnel(ray.direction, N, inter.m->ior, kr);
+        return reflectionColor * kr + refractionColor * (1 - kr) * inter.m->Tr;
+    }
     // phong reflectance model
-    if (inter.m->ior == 1)
-    {
+   
+
         Vector3f L_dir, L_indir;
         float pdf_DI = 0;
         L_dir = Direct_Illumination(ray, inter, pdf_DI);
@@ -264,21 +278,7 @@ Vector3f Scene::castRay_NEE(const Ray &ray, int depth) const
         }
         // Next Event Estination
         return L_dir + L_indir;
-    }
 
-    // reflect & refract
-    else
-    {
-        Vector3f reflectionDirection = normalize(reflect(ray.direction, N));
-        Vector3f refractionDirection = normalize(refract(ray.direction, N, inter.m->ior));
-        Vector3f reflectionRayOrig = (dotProduct(reflectionDirection, N) < 0) ? p - N * EPSILON : p + N * EPSILON;
-        Vector3f refractionRayOrig = (dotProduct(refractionDirection, N) < 0) ? p - N * EPSILON : p + N * EPSILON;
-        Vector3f reflectionColor = castRay_NEE(Ray(reflectionRayOrig, reflectionDirection), depth + 1);
-        Vector3f refractionColor = castRay_NEE(Ray(refractionRayOrig, refractionDirection), depth + 1);
-        float kr;
-        fresnel(ray.direction, N, inter.m->ior, kr);
-        return reflectionColor * kr + refractionColor * (1 - kr) * inter.m->Tr;
-    }
 }
 
 

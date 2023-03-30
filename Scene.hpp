@@ -24,7 +24,7 @@ public:
     Vector3f up = Vector3f(0, 1, 0);
     double fov = 40;
     Vector3f backgroundColor = Vector3f(0.235294, 0.67451, 0.843137);
-    int maxDepth = 8;
+    int maxDepth = 16;
     int spp = 16;
     std::string model_name = "veach-mis";
     std::string sampling_mode = "NEE";

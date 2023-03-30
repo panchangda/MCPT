@@ -1,7 +1,5 @@
 # Monte Carlo Path Tracer
 
----- 
-
 ## Features
 - [x] BVH Acceleration
 - [x] Multi-threading
@@ -17,7 +15,7 @@
 ### cornell-box  　*(method=NEE &nbsp; spp=16 &nbsp; time=~0.5h)*
 <img src="cornell-box.png"  width="" height="512" alt="cornell-box">
 
-### stairscase  　*(method=MIS &nbsp; spp=1024 &nbsp; time=~4h)*
+### stairscase  　*(method=MIS &nbsp; spp=1024 &nbsp; time=~200mins)*
 <img src="stairscase.png"  width="" height="512" alt="stariscase">
 
 ## Usage
@@ -46,7 +44,7 @@ arg3: different sampling method (options: NEE/BRDF/MIS)
 ## Code Description  
 
 |filename|description|p.s.|
-|:---:|:---:|:---|
+|:---:|:---:|:---:|
 |main.cpp|Data process: parse files and args, set scene for rendering||
 |Scene|Define **castRay(core function)**, store **objects** and **parameters** for render||
 |Material|Define material's **property** and how to **sample**, __eval__, **calculate pdf** of the material||

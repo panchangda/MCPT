@@ -263,6 +263,7 @@ pre[data-line] .line-highlight[data-end]:after {
       <div class="mume markdown-preview  ">
       <div><h1 class="mume-header" id="monte-carlo-path-tracer">Monte Carlo Path Tracer</h1>
 
+<hr>
 <h2 class="mume-header" id="features">Features</h2>
 
 <ul>
@@ -274,27 +275,29 @@ pre[data-line] .line-highlight[data-end]:after {
 </ul>
 <h2 class="mume-header" id="results">Results</h2>
 
-<h4 class="mume-header" id="veach-mis-spp128">veach-mis <em><strong>(spp=128)</strong></em></h4>
+<h3 class="mume-header" id="veach-mis--methodmis-nbsp-spp1024-nbsp-time20mins">veach-mis &#x3000;<em>(method=MIS &#xA0; spp=1024 &#xA0; time~=20mins)</em></h3>
 
 <img src="veach-mis.png" width height="512" alt="veach-mis">
-<h4 class="mume-header" id="cornell-box-spp16">cornell-box <em><strong>(spp=16)</strong></em></h4>
+<h3 class="mume-header" id="cornell-box---methodnee-nbsp-spp16-nbsp-time05h">cornell-box  &#x3000;<em>(method=NEE &#xA0; spp=16 &#xA0; time=~0.5h)</em></h3>
 
 <img src="cornell-box.png" width height="512" alt="cornell-box">
-<h4 class="mume-header" id="stairscase-spp128">stairscase <em><strong>(spp=128)</strong></em></h4>
+<h3 class="mume-header" id="stairscase---methodmis-nbsp-spp1024-nbsp-time4h">stairscase  &#x3000;<em>(method=MIS &#xA0; spp=1024 &#xA0; time=~4h)</em></h3>
 
 <img src="stairscase.png" width height="512" alt="stariscase">
 <h2 class="mume-header" id="usage">Usage</h2>
 
-<pre data-role="codeBlock" data-info="c++" class="language-cpp">mkdir build <span class="token operator">&amp;&amp;</span> cd build <span class="token operator">&amp;&amp;</span> make <span class="token operator">-</span>j4 <span class="token operator">&amp;&amp;</span> <span class="token punctuation">.</span><span class="token operator">/</span>PathTracing veach<span class="token operator">-</span>mis <span class="token number">16</span> NEE
-<span class="token punctuation">.</span><span class="token operator">/</span>PathTracing <span class="token punctuation">[</span>arg1<span class="token punctuation">]</span> <span class="token punctuation">[</span>arg2<span class="token punctuation">]</span> <span class="token punctuation">[</span>arg3<span class="token punctuation">]</span>
-arg1<span class="token operator">:</span> foldername in <span class="token operator">/</span>models
-arg2<span class="token operator">:</span> samples per pixel AKA spp
-arg3<span class="token operator">:</span> different sampling <span class="token function">method</span> <span class="token punctuation">(</span>options<span class="token operator">:</span> NEE<span class="token operator">/</span>BRDF<span class="token operator">/</span>MIS<span class="token punctuation">)</span>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">mkdir</span> build <span class="token operator">&amp;&amp;</span> <span class="token builtin class-name">cd</span> build <span class="token operator">&amp;&amp;</span> <span class="token function">make</span> -j4 <span class="token operator">&amp;&amp;</span> ./PathTracing veach-mis <span class="token number">16</span> NEE
+./PathTracing <span class="token punctuation">[</span>arg1<span class="token punctuation">]</span> <span class="token punctuation">[</span>arg2<span class="token punctuation">]</span> <span class="token punctuation">[</span>arg3<span class="token punctuation">]</span>
+arg1: foldername <span class="token keyword keyword-in">in</span> /models
+arg2: samples per pixel AKA spp
+arg3: different sampling method <span class="token punctuation">(</span>options: NEE/BRDF/MIS<span class="token punctuation">)</span>
 </pre><h2 class="mume-header" id="environment">Environment</h2>
 
 <ul>
 <li>OS: wsl2 ubuntu 20.04</li>
-<li>IDE: Visual Studio Code &amp; cmake</li>
+<li>CPU: AMD Ryzen 7 5800H 3.20 GHz</li>
+<li>RAM: 16G DDR4 3200MHz</li>
+<li>IDE: Visual Studio Code &amp; g++ &amp; cmake</li>
 <li>Dependency Lib (all in <strong>/libs</strong>)&#xFF1A;
 <ol>
 <li>pugixml
@@ -316,7 +319,7 @@ arg3<span class="token operator">:</span> different sampling <span class="token 
 </ol>
 </li>
 </ul>
-<h2 class="mume-header" id="code-structure">Code Structure</h2>
+<h2 class="mume-header" id="code-description">Code Description</h2>
 
 <table>
 <thead>
@@ -328,32 +331,84 @@ arg3<span class="token operator">:</span> different sampling <span class="token 
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center">Material</td>
-<td style="text-align:center">define material&apos;s <strong>property</strong> and how to <strong>sample</strong>, <strong>eval</strong>, <strong>calculate pdf</strong> of the material</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:center">BVH</td>
-<td style="text-align:center"><strong>build</strong> bvh and get <strong>intersection</strong> of bvh</td>
+<td style="text-align:center">main.cpp</td>
+<td style="text-align:center">Data process: parse files and args, set scene for rendering</td>
 <td style="text-align:left"></td>
 </tr>
 <tr>
 <td style="text-align:center">Scene</td>
-<td style="text-align:center">define <strong>castRay(core function)</strong>, store <strong>objects</strong> and <strong>parameters</strong> for render</td>
+<td style="text-align:center">Define <strong>castRay(core function)</strong>, store <strong>objects</strong> and <strong>parameters</strong> for render</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">Material</td>
+<td style="text-align:center">Define material&apos;s <strong>property</strong> and how to <strong>sample</strong>, <strong>eval</strong>, <strong>calculate pdf</strong> of the material</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">BVH</td>
+<td style="text-align:center">Build bvh and get intersection of bvh</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">Bounds3</td>
+<td style="text-align:center">Implement Axis-Aligned Bounding Box (AABB)</td>
 <td style="text-align:left"></td>
 </tr>
 <tr>
 <td style="text-align:center">Renderer</td>
-<td style="text-align:center">shoot rays, write results to file</td>
+<td style="text-align:center">Shoot rays, write results to PNG file</td>
 <td style="text-align:left"></td>
 </tr>
 <tr>
-<td style="text-align:center">main.cpp</td>
-<td style="text-align:center">data process: parse files, set scene for rendering</td>
+<td style="text-align:center">Object</td>
+<td style="text-align:center">Define base class Object, virtual method</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">Triangle</td>
+<td style="text-align:center">Define Class Mesh and Class Triangle</td>
+<td style="text-align:left">inherit from Object</td>
+</tr>
+<tr>
+<td style="text-align:center">Sphere</td>
+<td style="text-align:center">Define Class Sphere</td>
+<td style="text-align:left">inherit from Object</td>
+</tr>
+<tr>
+<td style="text-align:center">Light</td>
+<td style="text-align:center">Define base class Light</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">AreaLight</td>
+<td style="text-align:center">Define Class AreaLight</td>
+<td style="text-align:left">inherit from Light</td>
+</tr>
+<tr>
+<td style="text-align:center">Ray</td>
+<td style="text-align:center">Define ray&apos;s properties</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">Intersection</td>
+<td style="text-align:center">Define intersection&apos;s properties</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">Vector</td>
+<td style="text-align:center">Implement vector operation</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:center">global</td>
+<td style="text-align:center">Implement util functions</td>
 <td style="text-align:left"></td>
 </tr>
 </tbody>
 </table>
+<h2 class="mume-header" id="link">Link</h2>
+
 </div>
       </div>
       
